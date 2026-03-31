@@ -30,16 +30,16 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO dto) {
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword()); // пароль нужно будет закодировать в сервисе безопасности
-
-        User saved = userService.saveUser(user);
-
-        // Преобразуем в DTO перед возвратом
-        UserDTO response = UserDTO.fromEntity(saved);
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping
+//    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO dto) {
+//        User user = new User();
+//        user.setUsername(dto.getUsername());
+//        user.setPassword(dto.getPassword()); // пароль нужно будет закодировать в сервисе безопасности
+//
+//        User saved = userService.saveUser(user);
+//
+//        // Преобразуем в DTO перед возвратом
+//        UserDTO response = UserDTO.fromEntity(saved);
+//        return ResponseEntity.ok(response);
+//    }
 }
