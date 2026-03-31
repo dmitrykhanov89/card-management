@@ -1,4 +1,4 @@
-package bankcards.card_management;
+package bankcards;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
