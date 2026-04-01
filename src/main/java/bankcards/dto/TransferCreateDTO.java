@@ -1,5 +1,6 @@
 package bankcards.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,15 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO для создания перевода между картами")
 public class TransferCreateDTO {
 
+    @Schema(description = "ID карты отправителя", example = "1")
     private Long fromCardId;
+
+    @Schema(description = "ID карты получателя", example = "2")
     private Long toCardId;
+
+    @Schema(description = "Сумма перевода", example = "1000.50")
     private BigDecimal amount;
 }

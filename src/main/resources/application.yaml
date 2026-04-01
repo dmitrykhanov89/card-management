@@ -15,3 +15,11 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/migration/db.changelog-master.yaml
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    yaml:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html

@@ -7,6 +7,7 @@ import bankcards.entity.User;
 import bankcards.exception.ResourceNotFoundException;
 import bankcards.service.CardService;
 import bankcards.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,18 +28,21 @@ public class CardController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Создать карту", description = "Позволяет администратору создать новую карту для пользователя")
     public ResponseEntity<CardDTO> createCard(@RequestBody CardCreateDTO dto) {
         return ResponseEntity.ok(cardService.createCard(dto.getOwnerId(), dto.getCardNumber(), dto.getExpirationDate(), dto.getBalance()));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Получить карту по ID", description = "Возвращает информацию о карте по её идентификатору")
     public ResponseEntity<CardDTO> getCard(@PathVariable Long id) {
         return ResponseEntity.ok(cardService.getById(id));
     }
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Получить карты пользователя", description = "Возвращает список карт указанного пользователя с пагинацией")
     public ResponseEntity<Page<CardDTO>> getUserCards(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -49,6 +53,7 @@ public class CardController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Обновить статус карты", description = "Позволяет администратору изменить статус карты (ACTIVE, BLOCKED, EXPIRED)")
     public ResponseEntity<CardDTO> updateStatus(
             @PathVariable Long id,
             @RequestParam CardStatus status) {
@@ -57,12 +62,14 @@ public class CardController {
 
     @GetMapping("/{id}/balance")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(summary = "Посмотреть баланс карты", description = "Возвращает текущий баланс указанной карты")
     public ResponseEntity<?> getBalance(@PathVariable Long id) {
         return ResponseEntity.ok(cardService.getBalance(id));
     }
 
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(summary = "Получить свои карты", description = "Возвращает список карт текущего пользователя с пагинацией")
     public ResponseEntity<Page<CardDTO>> getMyCards(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -73,6 +80,7 @@ public class CardController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Удалить карту", description = "Позволяет администратору удалить карту по её идентификатору")
     public ResponseEntity<?> deleteCard(@PathVariable Long id) {
         cardService.deleteCard(id);
         return ResponseEntity.ok("Card deleted");
