@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs.yaml").permitAll()
                         // Регистрация и логин обычных пользователей
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         // Регистрация админа — только ADMIN

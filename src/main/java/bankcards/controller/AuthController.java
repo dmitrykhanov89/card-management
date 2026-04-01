@@ -7,16 +7,14 @@ import bankcards.entity.Role;
 import bankcards.entity.User;
 import bankcards.security.JwtUtils;
 import bankcards.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
@@ -30,10 +28,9 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
+    @Operation(summary = "Регистрация пользователя", description = "Регистрация нового пользователя с ролью USER")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already taken");
-        }
+        if (userService.existsByUsername(request.getUsername())) {throw new RuntimeException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -44,6 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Вход пользователя", description = "Аутентификация пользователя и получение JWT токена")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         String token = jwtUtils.generateToken(request.getUsername());
@@ -52,10 +50,9 @@ public class AuthController {
 
     @PostMapping("/admin-register")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Регистрация администратора", description = "Регистрация нового пользователя с ролью ADMIN (только для администраторов)")
     public ResponseEntity<String> registerAdmin(@RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already taken");
-        }
+        if (userService.existsByUsername(request.getUsername())) {throw new RuntimeException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));

@@ -3,6 +3,7 @@ package bankcards.service;
 import bankcards.dto.TransferDTO;
 import bankcards.entity.Card;
 import bankcards.entity.Transfer;
+import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.CardRepository;
 import bankcards.repository.TransferRepository;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,6 @@ public class TransferServiceImpl implements TransferService {
     }
 
     private Card getCard(Long id) {
-        return cardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+        return cardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Card not found with id: " + id));
     }
 }

@@ -1,6 +1,7 @@
 package bankcards.dto;
 
 import bankcards.entity.Transfer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -10,12 +11,22 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO перевода между картами")
 public class TransferDTO {
 
+    @Schema(description = "ID перевода", example = "1")
     private Long id;
+
+    @Schema(description = "Номер карты отправителя (замаскированный)", example = "**** **** **** 1234")
     private String fromCardMasked;
+
+    @Schema(description = "Номер карты получателя (замаскированный)", example = "**** **** **** 5678")
     private String toCardMasked;
+
+    @Schema(description = "Сумма перевода", example = "1000.50")
     private BigDecimal amount;
+
+    @Schema(description = "Дата и время создания перевода", example = "2026-04-01T12:30:45")
     private LocalDateTime createdAt;
 
     public static TransferDTO fromEntity(Transfer transfer) {

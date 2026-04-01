@@ -3,6 +3,7 @@ package bankcards.service;
 import bankcards.dto.UserDTO;
 import bankcards.entity.Role;
 import bankcards.entity.User;
+import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.RoleRepository;
 import bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,6 @@ public class UserServiceImpl implements UserService {
 
     public UserDTO findByUsernameDTO(String username) {
         return userRepository.findByUsername(username)
-                .map(UserDTO::fromEntity)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                .map(UserDTO::fromEntity).orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
     }
 }
