@@ -26,10 +26,21 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/users", "/api/users/**").permitAll()
-                        .requestMatchers("/api/cards/**", "/api/transfers/**").hasAnyRole("USER", "ADMIN")
+
+                        // 🔓 AUTH (регистрация + логин)
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // 👑 ADMIN
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // 💳 КАРТЫ И ПЕРЕВОДЫ
+                        .requestMatchers("/api/cards/**", "/api/transfers/**")
+                        .hasAnyRole("USER", "ADMIN")
+
+                        // 🔒 всё остальное
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
