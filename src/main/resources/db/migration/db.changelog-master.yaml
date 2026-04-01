@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/migration/0003_create_cards.yaml
   - include:
       file: db/migration/0004_create_transfers.yaml
+  - include:
+      file: db/migration/0005_insert_admin_user.yaml

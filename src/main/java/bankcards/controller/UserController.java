@@ -1,11 +1,10 @@
 package bankcards.controller;
 
 import bankcards.dto.UserDTO;
-import bankcards.dto.UserCreateDTO;
-import bankcards.entity.User;
-import bankcards.service.UserServiceImpl; // Обрати внимание: используем реализацию для DTO
+import bankcards.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,29 +16,19 @@ public class UserController {
 
     private final UserServiceImpl userService; // Интерфейс не имеет методов DTO
 
+    // ---------------- Получение всех пользователей — только ADMIN ----------------
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        // Используем метод из реализации, который возвращает DTO
         List<UserDTO> users = userService.findAllDTO();
         return ResponseEntity.ok(users);
     }
 
+    // ---------------- Получение конкретного пользователя — ADMIN или сам пользователь ----------------
     @GetMapping("/{username}")
+    @PreAuthorize("hasRole('ADMIN') or #username == authentication.name")
     public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
         UserDTO user = userService.findByUsernameDTO(username);
         return ResponseEntity.ok(user);
-    }
-
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO dto) {
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword()); // пароль нужно будет закодировать в сервисе безопасности
-
-        User saved = userService.saveUser(user);
-
-        // Преобразуем в DTO перед возвратом
-        UserDTO response = UserDTO.fromEntity(saved);
-        return ResponseEntity.ok(response);
     }
 }

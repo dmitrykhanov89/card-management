@@ -1,5 +1,6 @@
 package bankcards.service;
 
+import bankcards.entity.Role;
 import bankcards.entity.User;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface UserService {
     List<User> findAll();
 
     Optional<User> findById(Long id);
+
+    Role getRoleByName(String name);
 }

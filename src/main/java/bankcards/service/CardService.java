@@ -27,6 +27,8 @@ public interface CardService {
 
     BigDecimal getBalance(Long id);
 
+    void deleteCard(Long id);
+
 
     // Удалить
     Card updateBalance(Long id, BigDecimal amount);

@@ -1,7 +1,9 @@
 package bankcards.service;
 
 import bankcards.dto.UserDTO;
+import bankcards.entity.Role;
 import bankcards.entity.User;
+import bankcards.repository.RoleRepository;
 import bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public User saveUser(User user) {
@@ -39,6 +42,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public Role getRoleByName(String name) {
+        return roleRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + name));
     }
 
     // Методы для работы с DTO

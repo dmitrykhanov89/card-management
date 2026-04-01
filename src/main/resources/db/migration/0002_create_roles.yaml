@@ -18,6 +18,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
+
         - createTable:
             tableName: user_roles
             columns:
@@ -31,15 +32,31 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
+
         - addForeignKeyConstraint:
             baseTableName: user_roles
             baseColumnNames: user_id
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_userroles_user
+
         - addForeignKeyConstraint:
             baseTableName: user_roles
             baseColumnNames: role_id
             referencedTableName: roles
             referencedColumnNames: id
             constraintName: fk_userroles_role
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_USER
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_ADMIN
