@@ -14,21 +14,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserServiceImpl userService; // Интерфейс не имеет методов DTO
+    private final UserServiceImpl userService;
 
-    // ---------------- Получение всех пользователей — только ADMIN ----------------
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.findAllDTO();
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.findAllDTO());
     }
 
-    // ---------------- Получение конкретного пользователя — ADMIN или сам пользователь ----------------
     @GetMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN') or #username == authentication.name")
     public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
-        UserDTO user = userService.findByUsernameDTO(username);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.findByUsernameDTO(username));
     }
 }

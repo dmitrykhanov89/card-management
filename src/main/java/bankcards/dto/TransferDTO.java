@@ -1,10 +1,7 @@
 package bankcards.dto;
 
 import bankcards.entity.Transfer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,16 +18,13 @@ public class TransferDTO {
     private BigDecimal amount;
     private LocalDateTime createdAt;
 
-    public TransferDTO(Transfer transfer) {
-        this.id = transfer.getId();
-        this.fromCardMasked = maskCardNumber(transfer.getFromCard().getCardNumber());
-        this.toCardMasked = maskCardNumber(transfer.getToCard().getCardNumber());
-        this.amount = transfer.getAmount();
-        this.createdAt = transfer.getCreatedAt();
+    public static TransferDTO fromEntity(Transfer transfer) {
+        return new TransferDTO(transfer.getId(), mask(transfer.getFromCard().getCardNumber()),
+                mask(transfer.getToCard().getCardNumber()), transfer.getAmount(), transfer.getCreatedAt());
     }
 
-    private String maskCardNumber(String cardNumber) {
-        if (cardNumber == null || cardNumber.length() < 4) return "****";
-        return "**** **** **** " + cardNumber.substring(cardNumber.length() - 4);
+    private static String mask(String number) {
+        if (number == null || number.length() < 4) return "****";
+        return "**** **** **** " + number.substring(number.length() - 4);
     }
 }

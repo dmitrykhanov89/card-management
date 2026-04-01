@@ -20,8 +20,8 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public void createUser(User user) {
+        userRepository.save(user);
     }
 
     @Override
@@ -35,11 +35,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
-    }
-
-    @Override
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
@@ -50,10 +45,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("Role not found: " + name));
     }
 
-    // Методы для работы с DTO
     public List<UserDTO> findAllDTO() {
-        return userRepository.findAll()
-                .stream()
+        return userRepository.findAll().stream()
                 .map(UserDTO::fromEntity)
                 .collect(Collectors.toList());
     }

@@ -2,11 +2,7 @@ package bankcards.dto;
 
 import bankcards.entity.Card;
 import bankcards.entity.CardStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -22,16 +18,12 @@ public class CardDTO {
     private CardStatus status;
     private BigDecimal balance;
 
-    public CardDTO(Card card) {
-        this.id = card.getId();
-        this.maskedNumber = maskCardNumber(card.getCardNumber());
-        this.expirationDate = card.getExpirationDate();
-        this.status = card.getStatus();
-        this.balance = card.getBalance();
+    public static CardDTO fromEntity(Card card) {
+        return new CardDTO(card.getId(), mask(card.getCardNumber()), card.getExpirationDate(), card.getStatus(), card.getBalance());
     }
 
-    private String maskCardNumber(String cardNumber) {
-        if (cardNumber == null || cardNumber.length() < 4) return "****";
-        return "**** **** **** " + cardNumber.substring(cardNumber.length() - 4);
+    private static String mask(String number) {
+        if (number == null || number.length() < 4) return "****";
+        return "**** **** **** " + number.substring(number.length() - 4);
     }
 }
