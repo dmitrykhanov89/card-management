@@ -71,6 +71,14 @@ public class CardServiceImpl implements CardService {
                 .getBalance();
     }
 
+    @Override
+    public void deleteCard(Long id) {
+        if (!cardRepository.existsById(id)) {
+            throw new RuntimeException("Card not found with id: " + id);
+        }
+        cardRepository.deleteById(id);
+    }
+
     // Удалить
     @Override
     public Card updateBalance(Long id, BigDecimal amount) {
