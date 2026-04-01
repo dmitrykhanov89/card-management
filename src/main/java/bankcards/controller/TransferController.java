@@ -2,8 +2,6 @@ package bankcards.controller;
 
 import bankcards.dto.TransferDTO;
 import bankcards.dto.TransferCreateDTO;
-import bankcards.entity.Card;
-import bankcards.service.CardService;
 import bankcards.service.TransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,26 +16,16 @@ import java.util.List;
 public class TransferController {
 
     private final TransferService transferService;
-    private final CardService cardService;
 
-    // ---------------- Совершение перевода — только USER и ADMIN ----------------
     @PostMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<TransferDTO> makeTransfer(@RequestBody TransferCreateDTO dto) {
-        Card fromCard = cardService.findById(dto.getFromCardId())
-                .orElseThrow(() -> new RuntimeException("FromCard not found"));
-        Card toCard = cardService.findById(dto.getToCardId())
-                .orElseThrow(() -> new RuntimeException("ToCard not found"));
-
-        return ResponseEntity.ok(transferService.makeTransferDTO(fromCard, toCard, dto.getAmount()));
+        return ResponseEntity.ok(transferService.makeTransfer(dto.getFromCardId(), dto.getToCardId(), dto.getAmount()));
     }
 
-    // ---------------- Получение переводов по карте — только USER и ADMIN ----------------
     @GetMapping("/card/{cardId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<TransferDTO>> getCardTransfers(@PathVariable Long cardId) {
-        Card card = cardService.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
-        return ResponseEntity.ok(transferService.getTransfersByCardDTO(card));
+        return ResponseEntity.ok(transferService.getTransfersByCardId(cardId));
     }
 }

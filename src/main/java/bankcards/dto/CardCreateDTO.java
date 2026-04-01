@@ -1,10 +1,7 @@
 package bankcards.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -16,4 +13,5 @@ public class CardCreateDTO {
     private String cardNumber;
     private LocalDate expirationDate;
     private Long ownerId;
+    private BigDecimal balance;
 }
