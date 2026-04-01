@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -75,5 +76,19 @@ public class CardController {
     public ResponseEntity<CardDTO> setBalance(@PathVariable Long id,
                                               @RequestParam BigDecimal amount) {
         return ResponseEntity.ok(cardService.updateBalanceDTO(id, amount));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<Page<CardDTO>> getMyCards(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Получаем текущего пользователя
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User owner = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Page<CardDTO> cards = cardService.findCardsByUserDTO(owner, PageRequest.of(page, size));
+        return ResponseEntity.ok(cards);
     }
 }
