@@ -13,10 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
@@ -31,9 +28,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already taken");
-        }
+        if (userService.existsByUsername(request.getUsername())) {throw new RuntimeException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -53,9 +48,7 @@ public class AuthController {
     @PostMapping("/admin-register")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> registerAdmin(@RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already taken");
-        }
+        if (userService.existsByUsername(request.getUsername())) {throw new RuntimeException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));

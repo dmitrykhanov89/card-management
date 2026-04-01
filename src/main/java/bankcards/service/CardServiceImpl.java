@@ -4,6 +4,7 @@ import bankcards.dto.CardDTO;
 import bankcards.entity.Card;
 import bankcards.entity.CardStatus;
 import bankcards.entity.User;
+import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.CardRepository;
 import bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardDTO createCard(Long ownerId, String cardNumber, java.time.LocalDate expirationDate, BigDecimal balance) {
-        User owner = userRepository.findById(ownerId).orElseThrow(() -> new RuntimeException("User not found"));
+        User owner = userRepository.findById(ownerId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Card card = new Card();
         card.setCardNumber(cardNumber);
         card.setExpirationDate(expirationDate);
@@ -58,13 +59,13 @@ public class CardServiceImpl implements CardService {
     @Override
     public void deleteCard(Long id) {
         if (!cardRepository.existsById(id)) {
-            throw new RuntimeException("Card not found");
+            throw new ResourceNotFoundException("Card not found");
         }
         cardRepository.deleteById(id);
     }
 
     private Card getCardOrThrow(Long id) {
         return cardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card not found"));
     }
 }

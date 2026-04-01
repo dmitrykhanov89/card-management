@@ -4,6 +4,7 @@ import bankcards.dto.CardDTO;
 import bankcards.dto.CardCreateDTO;
 import bankcards.entity.CardStatus;
 import bankcards.entity.User;
+import bankcards.exception.ResourceNotFoundException;
 import bankcards.service.CardService;
 import bankcards.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,7 @@ public class CardController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CardDTO> createCard(@RequestBody CardCreateDTO dto) {
-        CardDTO card = cardService.createCard(dto.getOwnerId(), dto.getCardNumber(), dto.getExpirationDate(), dto.getBalance());
-        return ResponseEntity.ok(card);
+        return ResponseEntity.ok(cardService.createCard(dto.getOwnerId(), dto.getCardNumber(), dto.getExpirationDate(), dto.getBalance()));
     }
 
     @GetMapping("/{id}")
@@ -43,8 +43,7 @@ public class CardController {
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return ResponseEntity.ok(cardService.getUserCards(user, PageRequest.of(page, size)));
     }
 
@@ -68,8 +67,7 @@ public class CardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return ResponseEntity.ok(cardService.getUserCards(user, PageRequest.of(page, size)));
     }
 
