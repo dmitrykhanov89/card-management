@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: dmitiy.khanov
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: admin
+              - column:
+                  name: password
+                  value: $2a$10$zvSab6U.BK/2Hqcle9ibJebUScMv7uRZvjWl0qQi9L9ZahSPBLGTq
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: user
+              - column:
+                  name: password
+                  value: $2a$10$Jd7xr4uleAexx3lc6wev7u.i7qqSvzx1Hl1MrJX/c/Nt.Qc5NcDpa
+        - insert:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: role_id
+                  value: 2
+        - insert:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: 2
+              - column:
+                  name: role_id
+                  value: 1

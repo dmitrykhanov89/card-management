@@ -8,6 +8,7 @@ import bankcards.security.JwtUtils;
 import bankcards.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,29 +29,22 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    // ✅ РЕГИСТРАЦИЯ (всегда USER)
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity.badRequest().body("Username is already taken");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role userRole = userService.getRoleByName("ROLE_USER");
-
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         user.setRoles(roles);
-
         userService.saveUser(user);
-
         return ResponseEntity.ok("User registered successfully");
     }
 
-    // ✅ ЛОГИН
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -58,17 +52,31 @@ public class AuthController {
                             request.getPassword()
                     )
             );
-
             UserDetails userDetails = userDetailsService
                     .loadUserByUsername(request.getUsername());
-
             String token = jwtUtils.generateToken(userDetails.getUsername());
-
             return ResponseEntity.ok(new LoginResponse(token));
-
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401)
                     .body(new LoginResponse("Invalid username or password"));
         }
+    }
+
+    @PostMapping("/admin-register")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> registerAdmin(@RequestBody User user) {
+        if (userService.existsByUsername(user.getUsername())) {
+            return ResponseEntity.badRequest().body("Username is already taken");
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role adminRole = userService.getRoleByName("ROLE_ADMIN");
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(adminRole);
+        user.setRoles(roles);
+
+        userService.saveUser(user);
+        return ResponseEntity.ok("Admin registered successfully");
     }
 }

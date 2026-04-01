@@ -31,18 +31,15 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-
-                        // 🔓 AUTH (регистрация + логин)
-                        .requestMatchers("/api/auth/**").permitAll()
-
-                        // 👑 ADMIN
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                        // 💳 КАРТЫ И ПЕРЕВОДЫ
-                        .requestMatchers("/api/cards/**", "/api/transfers/**")
-                        .hasAnyRole("USER", "ADMIN")
-
-                        // 🔒 всё остальное
+                        // Регистрация и логин обычных пользователей
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        // Регистрация админа — только ADMIN
+                        .requestMatchers("/api/auth/admin-register").hasRole("ADMIN")
+                        // Пользователи — только ADMIN
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        // Карты и переводы — USER и ADMIN
+                        .requestMatchers("/api/cards/**", "/api/transfers/**").hasAnyRole("USER", "ADMIN")
+                        // Всё остальное — аутентификация обязательна
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
