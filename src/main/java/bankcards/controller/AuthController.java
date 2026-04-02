@@ -88,7 +88,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Регистрация администратора", description = "Регистрация нового пользователя с ролью ADMIN (только для администраторов)")
     public ResponseEntity<String> registerAdmin(@RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {throw new RuntimeException("Username is already taken");}
+        if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
