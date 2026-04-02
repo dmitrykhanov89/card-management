@@ -3,6 +3,7 @@ package bankcards.service;
 import bankcards.dto.UserDTO;
 import bankcards.entity.Role;
 import bankcards.entity.User;
+import bankcards.exception.BusinessException;
 import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.RoleRepository;
 import bankcards.repository.UserRepository;
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Role getRoleByName(String name) {
         return roleRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Role not found: " + name));
+                .orElseThrow(() -> new BusinessException("Role not found: " + name));
     }
 
     public List<UserDTO> findAllDTO() {
