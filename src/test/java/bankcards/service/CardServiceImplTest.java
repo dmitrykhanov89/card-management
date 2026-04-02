@@ -123,17 +123,20 @@ class CardServiceImplTest {
     }
 
     @Test
-    void deleteCard_WhenCardExists_DeletesCard() {
-        when(cardRepository.existsById(1L)).thenReturn(true);
+    void deleteCard_WhenCardExists_SetsDeletedFlag() {
+        Card card = makeCard(null, CardStatus.ACTIVE, BigDecimal.ZERO);
+        when(cardRepository.findById(1L)).thenReturn(Optional.of(card));
+        when(cardRepository.save(card)).thenReturn(card);
 
         cardService.deleteCard(1L);
 
-        verify(cardRepository).deleteById(1L);
+        assertTrue(card.isDeleted());
+        verify(cardRepository).save(card);
     }
 
     @Test
     void deleteCard_WhenCardDoesNotExist_ThrowsResourceNotFoundException() {
-        when(cardRepository.existsById(1L)).thenReturn(false);
+        when(cardRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> cardService.deleteCard(1L));
     }
 
@@ -172,7 +175,7 @@ class CardServiceImplTest {
         User user = makeUser("john");
         Card card = makeCard(user, CardStatus.ACTIVE, BigDecimal.ZERO);
         Page<Card> page = new PageImpl<>(List.of(card));
-        when(cardRepository.findByOwner(eq(user), any(Pageable.class))).thenReturn(page);
+        when(cardRepository.findByOwnerAndDeletedFalse(eq(user), any(Pageable.class))).thenReturn(page);
 
         Page<CardDTO> result = cardService.getUserCards(user, null, Pageable.unpaged());
 
@@ -184,11 +187,11 @@ class CardServiceImplTest {
         User user = makeUser("john");
         Card card = makeCard(user, CardStatus.ACTIVE, BigDecimal.ZERO);
         Page<Card> page = new PageImpl<>(List.of(card));
-        when(cardRepository.findByOwnerAndStatus(eq(user), eq(CardStatus.ACTIVE), any(Pageable.class))).thenReturn(page);
+        when(cardRepository.findByOwnerAndStatusAndDeletedFalse(eq(user), eq(CardStatus.ACTIVE), any(Pageable.class))).thenReturn(page);
 
         Page<CardDTO> result = cardService.getUserCards(user, CardStatus.ACTIVE, Pageable.unpaged());
 
         assertEquals(1, result.getTotalElements());
-        verify(cardRepository).findByOwnerAndStatus(eq(user), eq(CardStatus.ACTIVE), any(Pageable.class));
+        verify(cardRepository).findByOwnerAndStatusAndDeletedFalse(eq(user), eq(CardStatus.ACTIVE), any(Pageable.class));
     }
 }
