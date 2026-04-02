@@ -197,11 +197,9 @@ POST /api/transfers
 
 После запуска документация API доступна по адресу:
 
-```
-http://localhost:8080/swagger-ui.html
-```
+ [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-Для авторизации в Swagger UI нажмите **Authorize** и введите JWT-токен.
+Дополнительная документация доступна в папке `Docs`.
 
 ## Тестирование
 

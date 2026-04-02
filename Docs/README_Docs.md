@@ -8,6 +8,7 @@
 ## 📄 OpenAPI спецификация
 
 Файл `openapi.yaml` находится в директории `docs` и описывает все доступные эндпоинты API.
+Для авторизации в Swagger UI нажмите **Authorize** и введите JWT-токен.
 
 - OpenAPI YAML: [`/docs/openapi.yaml`](docs/openapi.yaml)
 - Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
