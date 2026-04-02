@@ -4,6 +4,7 @@ import bankcards.entity.User;
 import bankcards.repository.UserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
  *
  * <p>Используется Spring Security при аутентификации через JWT.</p>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -38,8 +40,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
+        log.trace("Loading user details for: {}", username);
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> {
+                    log.warn("User not found during authentication: {}", username);
+                    return new UsernameNotFoundException("Пользователь не найден");
+                });
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
