@@ -8,6 +8,7 @@ import bankcards.exception.ResourceNotFoundException;
 import bankcards.service.CardService;
 import bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,7 +49,7 @@ public class CardController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Создать карту", description = "Позволяет администратору создать новую карту для пользователя")
-    public ResponseEntity<CardDTO> createCard(@RequestBody CardCreateDTO dto) {
+    public ResponseEntity<CardDTO> createCard(@Valid @RequestBody CardCreateDTO dto) {
         return ResponseEntity.ok(cardService.createCard(dto.getOwnerId(), dto.getCardNumber(), dto.getExpirationDate(), dto.getBalance()));
     }
 
@@ -76,13 +77,14 @@ public class CardController {
      */
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Получить карты пользователя", description = "Возвращает список карт указанного пользователя с пагинацией")
+    @Operation(summary = "Получить карты пользователя", description = "Возвращает список карт указанного пользователя с пагинацией и фильтрацией")
     public ResponseEntity<Page<CardDTO>> getUserCards(
             @PathVariable Long userId,
+            @RequestParam(required = false) CardStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         User user = userService.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return ResponseEntity.ok(cardService.getUserCards(user, PageRequest.of(page, size)));
+        return ResponseEntity.ok(cardService.getUserCards(user, status, PageRequest.of(page, size)));
     }
 
     /**
@@ -124,13 +126,14 @@ public class CardController {
      */
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @Operation(summary = "Получить свои карты", description = "Возвращает список карт текущего пользователя с пагинацией")
+    @Operation(summary = "Получить свои карты", description = "Возвращает список карт текущего пользователя с пагинацией и фильтрацией")
     public ResponseEntity<Page<CardDTO>> getMyCards(
+            @RequestParam(required = false) CardStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         User user = userService.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return ResponseEntity.ok(cardService.getUserCards(user, PageRequest.of(page, size)));
+        return ResponseEntity.ok(cardService.getUserCards(user, status, PageRequest.of(page, size)));
     }
 
     /**

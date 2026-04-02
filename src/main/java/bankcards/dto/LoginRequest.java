@@ -1,6 +1,7 @@
 package bankcards.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -19,9 +20,11 @@ import lombok.Data;
 @Schema(description = "DTO для запроса логина пользователя")
 public class LoginRequest {
 
+    @NotBlank(message = "Имя пользователя обязательно")
     @Schema(description = "Имя пользователя", example = "john_doe")
     private String username;
 
+    @NotBlank(message = "Пароль обязателен")
     @Schema(description = "Пароль пользователя", example = "P@ssw0rd")
     private String password;
 }

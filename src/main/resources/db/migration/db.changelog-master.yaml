@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/migration/0004_create_transfers.yaml
   - include:
       file: db/migration/0005_insert_admin_user.yaml
+  - include:
+      file: db/migration/0006_add_deleted_to_cards.yaml

@@ -66,9 +66,14 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Page<CardDTO> getUserCards(User user, Pageable pageable) {
-        return cardRepository.findByOwner(user, pageable)
-                .map(CardDTO::fromEntity);
+    public Page<CardDTO> getUserCards(User user, CardStatus status, Pageable pageable) {
+        Page<Card> cards;
+        if (status != null) {
+            cards = cardRepository.findByOwnerAndStatusAndDeletedFalse(user, status, pageable);
+        } else {
+            cards = cardRepository.findByOwnerAndDeletedFalse(user, pageable);
+        }
+        return cards.map(CardDTO::fromEntity);
     }
 
     @Override
@@ -80,10 +85,9 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void deleteCard(Long id) {
-        if (!cardRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Card not found");
-        }
-        cardRepository.deleteById(id);
+        Card card = getCardOrThrow(id);
+        card.setDeleted(true);
+        cardRepository.save(card);
     }
 
     @Override

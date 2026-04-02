@@ -70,20 +70,20 @@ class CardControllerTest {
         when(userService.findById(1L)).thenReturn(Optional.of(user));
         CardDTO cardDTO = makeCardDTO(LocalDate.of(2026,12,31), CardStatus.ACTIVE, BigDecimal.valueOf(1000), false);
         Page<CardDTO> page = new PageImpl<>(List.of(cardDTO));
-        when(cardService.getUserCards(user, PageRequest.of(0,10))).thenReturn(page);
+        when(cardService.getUserCards(user, null, PageRequest.of(0,10))).thenReturn(page);
 
-        ResponseEntity<Page<CardDTO>> response = cardController.getUserCards(1L, 0, 10);
+        ResponseEntity<Page<CardDTO>> response = cardController.getUserCards(1L, null, 0, 10);
 
         assertNotNull(response);
         assert response.getBody() != null;
         assertEquals(1, response.getBody().getTotalElements());
-        verify(cardService, times(1)).getUserCards(user, PageRequest.of(0,10));
+        verify(cardService, times(1)).getUserCards(user, null, PageRequest.of(0,10));
     }
 
     @Test
     void getUserCards_WhenUserNotFound_ThrowsException() {
         when(userService.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> cardController.getUserCards(1L, 0, 10));
+        assertThrows(ResourceNotFoundException.class, () -> cardController.getUserCards(1L, null, 0, 10));
     }
 
     @Test

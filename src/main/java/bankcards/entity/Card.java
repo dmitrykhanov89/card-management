@@ -68,6 +68,12 @@ public class Card {
     private boolean blockRequested = false;
 
     /**
+     * <p>Флаг мягкого удаления карты.</p>
+     */
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    /**
      * <p>Владелец карты.</p>
      */
     @ManyToOne(fetch = FetchType.LAZY)

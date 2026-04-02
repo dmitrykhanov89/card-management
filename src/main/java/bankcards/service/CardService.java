@@ -56,10 +56,11 @@ public interface CardService {
      * Получает список карт пользователя с пагинацией.
      *
      * @param user пользователь
+     * @param status фильтр по статусу (опционально)
      * @param pageable параметры пагинации
      * @return страница DTO карт пользователя
      */
-    Page<CardDTO> getUserCards(User user, Pageable pageable);
+    Page<CardDTO> getUserCards(User user, CardStatus status, Pageable pageable);
 
     /**
      * Получает текущий баланс карты.

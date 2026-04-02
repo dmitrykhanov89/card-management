@@ -9,6 +9,7 @@ import bankcards.exception.BusinessException;
 import bankcards.security.JwtUtils;
 import bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,7 +52,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     @Operation(summary = "Регистрация пользователя", description = "Регистрация нового пользователя с ролью USER")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
         if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
@@ -70,7 +71,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "Вход пользователя", description = "Аутентификация пользователя и получение JWT токена")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         String token = jwtUtils.generateToken(request.getUsername());
         return ResponseEntity.ok(new LoginResponse(token));
@@ -87,7 +88,7 @@ public class AuthController {
     @PostMapping("/admin-register")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Регистрация администратора", description = "Регистрация нового пользователя с ролью ADMIN (только для администраторов)")
-    public ResponseEntity<String> registerAdmin(@RequestBody RegisterRequest request) {
+    public ResponseEntity<String> registerAdmin(@Valid @RequestBody RegisterRequest request) {
         if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
