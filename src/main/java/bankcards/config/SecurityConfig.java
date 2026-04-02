@@ -74,7 +74,6 @@ public class SecurityConfig {
      *
      * @param authConfig объект {@link AuthenticationConfiguration}
      * @return бин {@link AuthenticationManager}
-     * @throws Exception если не удалось создать менеджер аутентификации
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) {
