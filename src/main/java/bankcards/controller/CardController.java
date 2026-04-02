@@ -85,4 +85,12 @@ public class CardController {
         cardService.deleteCard(id);
         return ResponseEntity.ok("Card deleted");
     }
+
+    @PostMapping("/{id}/request-block")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Запросить блокировку карты", description = "Пользователь отправляет запрос на блокировку своей карты")
+    public ResponseEntity<CardDTO> requestBlock(@PathVariable Long id) {
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        return ResponseEntity.ok(cardService.requestBlock(id, username));
+    }
 }

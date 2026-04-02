@@ -5,6 +5,7 @@ import bankcards.dto.LoginResponse;
 import bankcards.dto.RegisterRequest;
 import bankcards.entity.Role;
 import bankcards.entity.User;
+import bankcards.exception.BusinessException;
 import bankcards.security.JwtUtils;
 import bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Регистрация пользователя", description = "Регистрация нового пользователя с ролью USER")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {throw new RuntimeException("Username is already taken");}
+        if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Username is already taken");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));

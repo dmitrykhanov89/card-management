@@ -3,9 +3,11 @@ package bankcards.service;
 import bankcards.dto.TransferDTO;
 import bankcards.entity.Card;
 import bankcards.entity.Transfer;
+import bankcards.exception.BusinessException;
 import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.CardRepository;
 import bankcards.repository.TransferRepository;
+import bankcards.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
     private final CardRepository cardRepository;
+    private final SecurityService securityService;
 
     @Override
     @Transactional
@@ -33,16 +36,16 @@ public class TransferServiceImpl implements TransferService {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         if (!from.getOwner().getUsername().equals(username) ||
                 !to.getOwner().getUsername().equals(username)) {
-            throw new RuntimeException("You can transfer only between your cards");
+            throw new BusinessException("You can transfer only between your cards");
         }
         // ❗ Проверка статуса
         if (from.getStatus() != bankcards.entity.CardStatus.ACTIVE ||
                 to.getStatus() != bankcards.entity.CardStatus.ACTIVE) {
-            throw new RuntimeException("Cards must be ACTIVE");
+            throw new BusinessException("Cards must be ACTIVE");
         }
         // ❗ Проверка баланса
         if (from.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("Insufficient balance");
+            throw new BusinessException("Insufficient balance");
         }
         // 💰 Перевод
         from.setBalance(from.getBalance().subtract(amount));
@@ -60,6 +63,7 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public List<TransferDTO> getTransfersByCardId(Long cardId) {
         Card card = getCard(cardId);
+        securityService.validateCardAccess(card);
         return transferRepository.findByFromCardOrToCard(card, card)
                 .stream()
                 .map(TransferDTO::fromEntity)

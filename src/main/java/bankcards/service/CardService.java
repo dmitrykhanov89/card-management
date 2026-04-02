@@ -15,4 +15,5 @@ public interface CardService {
     Page<CardDTO> getUserCards(User user, Pageable pageable);
     BigDecimal getBalance(Long id);
     void deleteCard(Long id);
+    CardDTO requestBlock(Long cardId, String username);
 }
