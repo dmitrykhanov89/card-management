@@ -14,9 +14,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
+/**
+ * <p>
+ * Реализация сервиса {@link CardService}, предоставляющая функциональность для управления банковскими картами.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Создание новой карты с шифрованием номера</li>
+ *     <li>Обновление статуса карты (активация, блокировка, истёк срок)</li>
+ *     <li>Получение баланса и информации о карте</li>
+ *     <li>Удаление карт</li>
+ *     <li>Запрос блокировки карты пользователем</li>
+ *     <li>Поддержка пагинации при получении списка карт пользователя</li>
+ * </ul>
+ */
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {

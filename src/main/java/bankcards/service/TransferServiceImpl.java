@@ -18,6 +18,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * Реализация сервиса {@link TransferService}, предоставляющая функциональность для управления переводами.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Выполнение перевода между картами с проверкой баланса</li>
+ *     <li>Получение истории переводов по карте</li>
+ * </ul>
+ */
 @Service
 @RequiredArgsConstructor
 public class TransferServiceImpl implements TransferService {

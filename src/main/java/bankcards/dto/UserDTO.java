@@ -7,6 +7,18 @@ import lombok.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * Data Transfer Object (DTO) для пользователя.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Содержит ID, username и набор ролей пользователя</li>
+ *     <li>Предоставляет метод {@link #fromEntity(User)} для преобразования сущности {@link User} в DTO</li>
+ *     <li>Используется для передачи данных пользователя через REST API без раскрытия чувствительных данных</li>
+ * </ul>
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,6 +35,12 @@ public class UserDTO {
     @Schema(description = "Роли пользователя", example = "[\"ROLE_USER\", \"ROLE_ADMIN\"]")
     private Set<String> roles;
 
+    /**
+     * Преобразует сущность {@link User} в объект {@link UserDTO}.
+     *
+     * @param user сущность {@link User}
+     * @return объект {@link UserDTO} с id, username и именами ролей
+     */
     public static UserDTO fromEntity(User user) {
         Set<String> roleNames = user.getRoles().stream()
                 .map(Role::getName)

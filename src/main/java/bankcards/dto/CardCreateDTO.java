@@ -5,6 +5,19 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * <p>
+ * Data Transfer Object (DTO) для запроса на создание новой банковской карты.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Содержит номер карты и дату окончания действия</li>
+ *     <li>Содержит ID владельца карты</li>
+ *     <li>Содержит начальный баланс карты</li>
+ *     <li>Используется в API при создании карты администратором</li>
+ * </ul>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

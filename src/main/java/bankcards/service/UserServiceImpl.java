@@ -14,6 +14,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * Реализация сервиса {@link UserService}, предоставляющая функциональность для управления пользователями.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Создание пользователей с назначением роли</li>
+ *     <li>Поиск пользователей по имени или идентификатору</li>
+ *     <li>Проверка существования пользователя</li>
+ *     <li>Получение роли пользователя по имени</li>
+ * </ul>
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

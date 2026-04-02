@@ -8,6 +8,18 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * <p>
+ * Data Transfer Object (DTO) для создания нового перевода между картами.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Содержит ID карты отправителя и получателя</li>
+ *     <li>Содержит сумму перевода</li>
+ *     <li>Используется при вызове API для создания перевода</li>
+ * </ul>
+ */
 @Getter
 @Setter
 @NoArgsConstructor
