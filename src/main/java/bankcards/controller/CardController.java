@@ -83,7 +83,7 @@ public class CardController {
             @RequestParam(required = false) CardStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        User user = userService.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userService.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
         return ResponseEntity.ok(cardService.getUserCards(user, status, PageRequest.of(page, size)));
     }
 
@@ -132,7 +132,7 @@ public class CardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        User user = userService.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userService.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
         return ResponseEntity.ok(cardService.getUserCards(user, status, PageRequest.of(page, size)));
     }
 

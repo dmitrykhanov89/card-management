@@ -47,16 +47,16 @@ public class TransferServiceImpl implements TransferService {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         if (!from.getOwner().getUsername().equals(username) ||
                 !to.getOwner().getUsername().equals(username)) {
-            throw new BusinessException("You can transfer only between your cards");
+            throw new BusinessException("Перевод средств возможен только между вашими картами.");
         }
         // ❗ Проверка статуса
         if (from.getStatus() != bankcards.entity.CardStatus.ACTIVE ||
                 to.getStatus() != bankcards.entity.CardStatus.ACTIVE) {
-            throw new BusinessException("Cards must be ACTIVE");
+            throw new BusinessException("Карты должны быть АКТИВНЫМИ.");
         }
         // ❗ Проверка баланса
         if (from.getBalance().compareTo(amount) < 0) {
-            throw new BusinessException("Insufficient balance");
+            throw new BusinessException("Недостаточный баланс");
         }
         // 💰 Перевод
         from.setBalance(from.getBalance().subtract(amount));
@@ -82,6 +82,6 @@ public class TransferServiceImpl implements TransferService {
     }
 
     private Card getCard(Long id) {
-        return cardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Card not found with id: " + id));
+        return cardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Не найдена карта с id: " + id));
     }
 }

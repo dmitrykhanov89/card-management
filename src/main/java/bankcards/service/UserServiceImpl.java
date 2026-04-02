@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Role getRoleByName(String name) {
         return roleRepository.findByName(name)
-                .orElseThrow(() -> new BusinessException("Role not found: " + name));
+                .orElseThrow(() -> new BusinessException("Роль не найдена: " + name));
     }
 
     public List<UserDTO> findAllDTO() {
@@ -68,6 +68,6 @@ public class UserServiceImpl implements UserService {
 
     public UserDTO findByUsernameDTO(String username) {
         return userRepository.findByUsername(username)
-                .map(UserDTO::fromEntity).orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
+                .map(UserDTO::fromEntity).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден: " + username));
     }
 }

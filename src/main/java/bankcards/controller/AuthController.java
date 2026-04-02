@@ -53,7 +53,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Регистрация пользователя", description = "Регистрация нового пользователя с ролью USER")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Username is already taken");}
+        if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Имя пользователя уже занято");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -89,7 +89,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Регистрация администратора", description = "Регистрация нового пользователя с ролью ADMIN (только для администраторов)")
     public ResponseEntity<String> registerAdmin(@Valid @RequestBody RegisterRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Username is already taken");}
+        if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Имя пользователя уже занято");}
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
