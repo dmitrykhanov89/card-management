@@ -30,6 +30,9 @@ public class Card {
     @Column(nullable = false)
     private BigDecimal balance;
 
+    @Column(nullable = false)
+    private boolean blockRequested = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User owner;

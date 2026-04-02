@@ -29,8 +29,12 @@ public class CardDTO {
     @Schema(description = "Баланс карты", example = "1000.50")
     private BigDecimal balance;
 
+    @Schema(description = "Запрошена блокировка карты", example = "false")
+    private boolean blockRequested;
+
     public static CardDTO fromEntity(Card card) {
-        return new CardDTO(card.getId(), mask(card.getCardNumber()), card.getExpirationDate(), card.getStatus(), card.getBalance());
+        return new CardDTO(card.getId(), mask(card.getCardNumber()), card.getExpirationDate(), card.getStatus(), card.getBalance(),
+                card.isBlockRequested());
     }
 
     private static String mask(String number) {
