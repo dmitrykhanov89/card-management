@@ -6,6 +6,7 @@ import bankcards.entity.Transfer;
 import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.CardRepository;
 import bankcards.repository.TransferRepository;
+import bankcards.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
     private final CardRepository cardRepository;
+    private final SecurityService securityService;
 
     @Override
     @Transactional
@@ -60,6 +62,7 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public List<TransferDTO> getTransfersByCardId(Long cardId) {
         Card card = getCard(cardId);
+        securityService.validateCardAccess(card);
         return transferRepository.findByFromCardOrToCard(card, card)
                 .stream()
                 .map(TransferDTO::fromEntity)

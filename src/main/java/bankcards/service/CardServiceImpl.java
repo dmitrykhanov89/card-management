@@ -7,6 +7,7 @@ import bankcards.entity.User;
 import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.CardRepository;
 import bankcards.repository.UserRepository;
+import bankcards.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
+    private final SecurityService securityService;
 
     @Override
     public CardDTO createCard(Long ownerId, String cardNumber, java.time.LocalDate expirationDate, BigDecimal balance) {
@@ -42,7 +44,9 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardDTO getById(Long id) {
-        return CardDTO.fromEntity(getCardOrThrow(id));
+        Card card = getCardOrThrow(id);
+        securityService.validateCardAccess(card);
+        return CardDTO.fromEntity(card);
     }
 
     @Override
@@ -53,7 +57,9 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public BigDecimal getBalance(Long id) {
-        return getCardOrThrow(id).getBalance();
+        Card card = getCardOrThrow(id);
+        securityService.validateCardAccess(card);
+        return card.getBalance();
     }
 
     @Override
