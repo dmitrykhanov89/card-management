@@ -174,8 +174,21 @@ class CardServiceImplTest {
         Page<Card> page = new PageImpl<>(List.of(card));
         when(cardRepository.findByOwner(eq(user), any(Pageable.class))).thenReturn(page);
 
-        Page<CardDTO> result = cardService.getUserCards(user, Pageable.unpaged());
+        Page<CardDTO> result = cardService.getUserCards(user, null, Pageable.unpaged());
 
         assertEquals(1, result.getTotalElements());
+    }
+
+    @Test
+    void getUserCards_WhenFilteredByStatus_ReturnsFilteredPage() {
+        User user = makeUser("john");
+        Card card = makeCard(user, CardStatus.ACTIVE, BigDecimal.ZERO);
+        Page<Card> page = new PageImpl<>(List.of(card));
+        when(cardRepository.findByOwnerAndStatus(eq(user), eq(CardStatus.ACTIVE), any(Pageable.class))).thenReturn(page);
+
+        Page<CardDTO> result = cardService.getUserCards(user, CardStatus.ACTIVE, Pageable.unpaged());
+
+        assertEquals(1, result.getTotalElements());
+        verify(cardRepository).findByOwnerAndStatus(eq(user), eq(CardStatus.ACTIVE), any(Pageable.class));
     }
 }

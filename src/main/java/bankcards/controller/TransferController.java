@@ -4,6 +4,7 @@ import bankcards.dto.TransferDTO;
 import bankcards.dto.TransferCreateDTO;
 import bankcards.service.TransferService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,7 +39,7 @@ public class TransferController {
     @PostMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(summary = "Совершить перевод", description = "Позволяет пользователю перевести деньги между своими картами")
-    public ResponseEntity<TransferDTO> makeTransfer(@RequestBody TransferCreateDTO dto) {
+    public ResponseEntity<TransferDTO> makeTransfer(@Valid @RequestBody TransferCreateDTO dto) {
         return ResponseEntity.ok(transferService.makeTransfer(dto.getFromCardId(), dto.getToCardId(), dto.getAmount()));
     }
 
