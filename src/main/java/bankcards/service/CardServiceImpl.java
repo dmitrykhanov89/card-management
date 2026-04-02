@@ -41,7 +41,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardDTO createCard(Long ownerId, String cardNumber, java.time.LocalDate expirationDate, BigDecimal balance) {
-        User owner = userRepository.findById(ownerId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User owner = userRepository.findById(ownerId).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
         Card card = new Card();
         card.setCardNumber(cardNumber);
         card.setExpirationDate(expirationDate);
@@ -94,10 +94,10 @@ public class CardServiceImpl implements CardService {
     public CardDTO requestBlock(Long cardId, String username) {
         Card card = getCardOrThrow(cardId);
         if (!card.getOwner().getUsername().equals(username)) {
-            throw new AccessDeniedException("You can request block only for your own card");
+            throw new AccessDeniedException("Вы можете запросить блокировку только для своей карты.");
         }
         if (card.getStatus() != CardStatus.ACTIVE) {
-            throw new BusinessException("Only ACTIVE cards can be requested for block");
+            throw new BusinessException("Для блокировки можно запросить только АКТИВНЫЕ карты.");
         }
         card.setBlockRequested(true);
         return CardDTO.fromEntity(cardRepository.save(card));
@@ -105,6 +105,6 @@ public class CardServiceImpl implements CardService {
 
     private Card getCardOrThrow(Long id) {
         return cardRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Card not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Карта не найдена"));
     }
 }

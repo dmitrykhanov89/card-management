@@ -38,7 +38,7 @@ public class SecurityService {
         boolean isAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
         if (!isAdmin && !card.getOwner().getUsername().equals(username)) {
-            throw new AccessDeniedException("Access denied to this card");
+            throw new AccessDeniedException("Пользователь не имеет прав доступа к карте");
         }
     }
 }
