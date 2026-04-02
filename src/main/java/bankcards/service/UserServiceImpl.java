@@ -8,6 +8,7 @@ import bankcards.exception.ResourceNotFoundException;
 import bankcards.repository.RoleRepository;
 import bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  *     <li>Получение роли пользователя по имени</li>
  * </ul>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -36,38 +38,52 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(User user) {
+        log.info("Creating user: {}", user.getUsername());
         userRepository.save(user);
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
+        log.debug("Finding user by username: {}", username);
         return userRepository.findByUsername(username);
     }
 
     @Override
     public boolean existsByUsername(String username) {
+        log.debug("Checking if user exists: {}", username);
         return userRepository.existsByUsername(username);
     }
 
     @Override
     public Optional<User> findById(Long id) {
+        log.debug("Finding user by ID: {}", id);
         return userRepository.findById(id);
     }
 
     @Override
     public Role getRoleByName(String name) {
+        log.debug("Fetching role by name: {}", name);
         return roleRepository.findByName(name)
-                .orElseThrow(() -> new BusinessException("Роль не найдена: " + name));
+                .orElseThrow(() -> {
+                    log.error("Role not found: {}", name);
+                    return new BusinessException("Роль не найдена: " + name);
+                });
     }
 
     public List<UserDTO> findAllDTO() {
+        log.debug("Fetching all users");
         return userRepository.findAll().stream()
                 .map(UserDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public UserDTO findByUsernameDTO(String username) {
+        log.debug("Fetching user DTO by username: {}", username);
         return userRepository.findByUsername(username)
-                .map(UserDTO::fromEntity).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден: " + username));
+                .map(UserDTO::fromEntity)
+                .orElseThrow(() -> {
+                    log.warn("User not found: {}", username);
+                    return new ResourceNotFoundException("Пользователь не найден: " + username);
+                });
     }
 }

@@ -11,6 +11,7 @@ import bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,7 @@ import java.util.Set;
  *
  * <p>Все операции возвращают {@link ResponseEntity} с результатом действия.</p>
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -53,6 +55,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Регистрация пользователя", description = "Регистрация нового пользователя с ролью USER")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
+        log.info("User registration attempt: {}", request.getUsername());
         if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Имя пользователя уже занято");}
         User user = new User();
         user.setUsername(request.getUsername());
@@ -60,6 +63,7 @@ public class AuthController {
         Role role = userService.getRoleByName("ROLE_USER");
         user.setRoles(Set.of(role));
         userService.createUser(user);
+        log.info("User registered successfully: {}", request.getUsername());
         return ResponseEntity.ok("User registered");
     }
 
@@ -72,8 +76,10 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Вход пользователя", description = "Аутентификация пользователя и получение JWT токена")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        log.info("Login attempt for user: {}", request.getUsername());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         String token = jwtUtils.generateToken(request.getUsername());
+        log.info("User logged in successfully: {}", request.getUsername());
         return ResponseEntity.ok(new LoginResponse(token));
     }
 
@@ -89,6 +95,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Регистрация администратора", description = "Регистрация нового пользователя с ролью ADMIN (только для администраторов)")
     public ResponseEntity<String> registerAdmin(@Valid @RequestBody RegisterRequest request) {
+        log.info("Admin registration attempt: {}", request.getUsername());
         if (userService.existsByUsername(request.getUsername())) {throw new BusinessException("Имя пользователя уже занято");}
         User user = new User();
         user.setUsername(request.getUsername());
@@ -96,6 +103,7 @@ public class AuthController {
         Role role = userService.getRoleByName("ROLE_ADMIN");
         user.setRoles(Set.of(role));
         userService.createUser(user);
+        log.info("Admin registered successfully: {}", request.getUsername());
         return ResponseEntity.ok("Admin registered");
     }
 }

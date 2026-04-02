@@ -2,6 +2,7 @@ package bankcards.security;
 
 import bankcards.entity.Card;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Objects;
  *
  * <p>Используется в сервисах и контроллерах для защиты бизнес-логики и ресурсов.</p>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SecurityService {
@@ -38,7 +40,9 @@ public class SecurityService {
         boolean isAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
         if (!isAdmin && !card.getOwner().getUsername().equals(username)) {
+            log.warn("Access denied to card ID: {} for user: {}", card.getId(), username);
             throw new AccessDeniedException("Пользователь не имеет прав доступа к карте");
         }
+        log.trace("Access granted to card ID: {} for user: {}", card.getId(), username);
     }
 }
