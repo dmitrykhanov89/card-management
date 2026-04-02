@@ -15,6 +15,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * <p>
+ * Конфигурация безопасности Spring Security для приложения управления банковскими картами.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Настройка JWT-аутентификации через {@link JwtAuthenticationFilter}</li>
+ *     <li>Определение правил доступа к API по ролям (ADMIN, USER)</li>
+ *     <li>Отключение CSRF для stateless API</li>
+ *     <li>Использование stateless сессий (JWT)</li>
+ *     <li>Настройка открытых путей для Swagger UI и публичных эндпоинтов</li>
+ *     <li>Бин {@link PasswordEncoder} для хэширования паролей</li>
+ *     <li>Бин {@link AuthenticationManager} для управления аутентификацией</li>
+ * </ul>
+ */
 @EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
@@ -22,6 +38,12 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Настраивает цепочку фильтров безопасности Spring Security.
+     *
+     * @param http объект {@link HttpSecurity} для конфигурации
+     * @return объект {@link SecurityFilterChain}, применяемый в приложении
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
@@ -47,11 +69,23 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Создаёт бин {@link AuthenticationManager} для управления аутентификацией.
+     *
+     * @param authConfig объект {@link AuthenticationConfiguration}
+     * @return бин {@link AuthenticationManager}
+     * @throws Exception если не удалось создать менеджер аутентификации
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) {
         return authConfig.getAuthenticationManager();
     }
 
+    /**
+     * Создаёт бин {@link PasswordEncoder} для хэширования паролей пользователей.
+     *
+     * @return объект {@link BCryptPasswordEncoder}
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

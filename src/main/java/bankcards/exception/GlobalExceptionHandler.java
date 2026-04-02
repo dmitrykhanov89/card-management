@@ -9,10 +9,28 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * <p>
+ * Глобальный обработчик исключений для всего приложения.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Обработка ошибок бизнес-логики ({@link BusinessException}) с кодом 400</li>
+ *     <li>Обработка ошибок отсутствия ресурса ({@link ResourceNotFoundException}) с кодом 404</li>
+ *     <li>Обработка ошибок валидации DTO ({@link MethodArgumentNotValidException}) с кодом 400</li>
+ *     <li>Формирование JSON-ответа с сообщением об ошибке</li>
+ * </ul>
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 404 — ресурс не найден
+    /**
+     * Обрабатывает исключение {@link ResourceNotFoundException}.
+     *
+     * @param ex исключение
+     * @return {@link ResponseEntity} с кодом 404 и сообщением об ошибке
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleNotFound(ResourceNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
@@ -20,6 +38,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    /**
+     * Обрабатывает исключение {@link BusinessException}.
+     *
+     * @param ex исключение
+     * @return {@link ResponseEntity} с кодом 400 и сообщением об ошибке
+     */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Map<String, String>> handleBusiness(BusinessException ex) {
         Map<String, String> response = new HashMap<>();
@@ -27,7 +51,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    // 400 — валидация DTO (@Valid)
+    /**
+     * Обрабатывает ошибки валидации DTO (@Valid).
+     *
+     * @param ex исключение {@link MethodArgumentNotValidException}
+     * @return {@link ResponseEntity} с кодом 400 и списком полей с ошибками
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

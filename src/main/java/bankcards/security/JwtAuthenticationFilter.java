@@ -15,6 +15,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import bankcards.service.UserDetailsServiceImpl;
 import java.io.IOException;
 
+/**
+ * <p>
+ * Фильтр для аутентификации JWT, выполняющий проверку токена на каждом запросе.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Извлечение JWT из заголовка Authorization</li>
+ *     <li>Проверка валидности токена через {@link JwtUtils}</li>
+ *     <li>Установка аутентификации пользователя в {@link SecurityContextHolder}</li>
+ *     <li>Пропуск запросов на регистрацию и логин</li>
+ * </ul>
+ *
+ * <p>Используется в цепочке фильтров Spring Security для обеспечения безопасного доступа к API.</p>
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -22,6 +37,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final UserDetailsServiceImpl userDetailsService;
 
+    /**
+     * Выполняет фильтрацию запроса, проверяет JWT и устанавливает аутентификацию пользователя.
+     *
+     * @param request  объект запроса {@link HttpServletRequest}
+     * @param response объект ответа {@link HttpServletResponse}
+     * @param filterChain цепочка фильтров {@link FilterChain}
+     * @throws ServletException если происходит ошибка сервлета
+     * @throws IOException если происходит ошибка ввода/вывода
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
@@ -48,6 +72,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Определяет, следует ли пропустить фильтрацию для определённых путей.
+     *
+     * @param request объект запроса {@link HttpServletRequest}
+     * @return true, если фильтр не должен применяться к запросу (например, регистрация или логин)
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();

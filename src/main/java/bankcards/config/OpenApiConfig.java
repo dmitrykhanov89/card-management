@@ -9,9 +9,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 
+/**
+ * <p>
+ * Конфигурация OpenAPI / Swagger для проекта Bank Cards API.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Настройка информации о API: название, версия, описание, контактные данные</li>
+ *     <li>Добавление схемы безопасности JWT (bearer token)</li>
+ *     <li>Обеспечение интеграции с Swagger UI для документирования API</li>
+ * </ul>
+ */
 @Configuration
 public class OpenApiConfig {
 
+    /**
+     * Создаёт и настраивает объект {@link OpenAPI} для Swagger.
+     *
+     * @return объект {@link OpenAPI} с информацией о приложении и схемой безопасности
+     */
     @Bean
     public OpenAPI bankCardsOpenAPI() {
         return new OpenAPI()

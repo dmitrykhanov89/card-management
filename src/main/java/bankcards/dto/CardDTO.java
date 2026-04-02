@@ -7,6 +7,19 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * <p>
+ * Data Transfer Object (DTO) для представления информации о банковской карте.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Содержит маскированный номер карты</li>
+ *     <li>Содержит статус карты и дату окончания действия</li>
+ *     <li>Содержит текущий баланс и информацию о запросе на блокировку</li>
+ *     <li>Предоставляет метод {@link #fromEntity(Card)} для преобразования сущности {@link Card} в DTO</li>
+ * </ul>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

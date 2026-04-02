@@ -3,6 +3,18 @@ package bankcards.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+/**
+ * <p>
+ * Data Transfer Object (DTO) для запроса на регистрацию нового пользователя.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Содержит логин и пароль пользователя</li>
+ *     <li>Используется при вызове API регистрации пользователя</li>
+ *     <li>Пароль передаётся в зашифрованном виде на сервере (хэшируется перед сохранением)</li>
+ * </ul>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

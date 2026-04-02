@@ -18,6 +18,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
+/**
+ * <p>
+ * Контроллер аутентификации и регистрации пользователей.
+ * </p>
+ *
+ * <p>Основные возможности:</p>
+ * <ul>
+ *     <li>Регистрация нового пользователя с ролью USER</li>
+ *     <li>Аутентификация пользователя и получение JWT-токена</li>
+ *     <li>Регистрация администратора с ролью ADMIN (только для существующих админов)</li>
+ * </ul>
+ *
+ * <p>Все операции возвращают {@link ResponseEntity} с результатом действия.</p>
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -28,6 +42,13 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Регистрация нового пользователя с ролью USER.
+     *
+     * @param request объект {@link RegisterRequest} с данными нового пользователя
+     * @return {@link ResponseEntity} с сообщением о результате регистрации
+     * @throws BusinessException если имя пользователя уже занято
+     */
     @PostMapping("/register")
     @Operation(summary = "Регистрация пользователя", description = "Регистрация нового пользователя с ролью USER")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
@@ -41,6 +62,12 @@ public class AuthController {
         return ResponseEntity.ok("User registered");
     }
 
+    /**
+     * Аутентификация пользователя и получение JWT токена.
+     *
+     * @param request объект {@link LoginRequest} с именем пользователя и паролем
+     * @return {@link ResponseEntity} с {@link LoginResponse}, содержащим JWT токен
+     */
     @PostMapping("/login")
     @Operation(summary = "Вход пользователя", description = "Аутентификация пользователя и получение JWT токена")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
@@ -49,6 +76,14 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token));
     }
 
+    /**
+     * Регистрация нового администратора с ролью ADMIN.
+     * <p>Доступно только для пользователей с ролью ADMIN.</p>
+     *
+     * @param request объект {@link RegisterRequest} с данными нового администратора
+     * @return {@link ResponseEntity} с сообщением о результате регистрации
+     * @throws RuntimeException если имя пользователя уже занято
+     */
     @PostMapping("/admin-register")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Регистрация администратора", description = "Регистрация нового пользователя с ролью ADMIN (только для администраторов)")
