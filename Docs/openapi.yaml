@@ -6,12 +6,11 @@ info:
     name: Your Name
     email: your.email@example.com
   version: "1.0"
-externalDocs:
-  description: README проекта
-  url: https://github.com/your-repo-url
 servers:
   - url: http://localhost:8080
     description: Generated server url
+security:
+  - bearerAuth: []
 paths:
   /api/transfers:
     post:
@@ -46,6 +45,27 @@ paths:
             schema:
               $ref: "#/components/schemas/CardCreateDTO"
         required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardDTO"
+  /api/cards/{id}/request-block:
+    post:
+      tags:
+        - card-controller
+      summary: Запросить блокировку карты
+      description: Пользователь отправляет запрос на блокировку своей карты
+      operationId: requestBlock
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         "200":
           description: OK
@@ -270,7 +290,7 @@ paths:
       tags:
         - card-controller
       summary: Получить карты пользователя
-      description: Возвращает список карт указанного пользователя с пагинацией
+      description: Возвращает список карт указанного пользователя с пагинацией и фильтрацией
       operationId: getUserCards
       parameters:
         - name: userId
@@ -279,6 +299,15 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - BLOCKED
+              - EXPIRED
         - name: page
           in: query
           required: false
@@ -305,9 +334,18 @@ paths:
       tags:
         - card-controller
       summary: Получить свои карты
-      description: Возвращает список карт текущего пользователя с пагинацией
+      description: Возвращает список карт текущего пользователя с пагинацией и фильтрацией
       operationId: getMyCards
       parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - BLOCKED
+              - EXPIRED
         - name: page
           in: query
           required: false
@@ -349,6 +387,11 @@ components:
           type: number
           description: Сумма перевода
           example: 1000.5
+          minimum: 0.01
+      required:
+        - amount
+        - fromCardId
+        - toCardId
     TransferDTO:
       type: object
       description: DTO перевода между картами
@@ -383,6 +426,8 @@ components:
           type: string
           description: Номер карты
           example: 1234123412341234
+          minLength: 1
+          pattern: "\\d{16}"
         expirationDate:
           type: string
           format: date
@@ -397,6 +442,12 @@ components:
           type: number
           description: Начальный баланс карты
           example: 1000.5
+          minimum: 0.0
+      required:
+        - balance
+        - cardNumber
+        - expirationDate
+        - ownerId
     CardDTO:
       type: object
       description: DTO для представления банковской карты
@@ -427,6 +478,10 @@ components:
           type: number
           description: Баланс карты
           example: 1000.5
+        blockRequested:
+          type: boolean
+          description: Запрошена блокировка карты
+          example: false
     RegisterRequest:
       type: object
       description: DTO для регистрации нового пользователя
@@ -435,10 +490,17 @@ components:
           type: string
           description: Логин пользователя
           example: john_doe
+          maxLength: 50
+          minLength: 3
         password:
           type: string
           description: Пароль пользователя
           example: strongPassword123
+          maxLength: 2147483647
+          minLength: 6
+      required:
+        - password
+        - username
     LoginRequest:
       type: object
       description: DTO для запроса логина пользователя
@@ -447,10 +509,15 @@ components:
           type: string
           description: Имя пользователя
           example: john_doe
+          minLength: 1
         password:
           type: string
           description: Пароль пользователя
           example: P@ssw0rd
+          minLength: 1
+      required:
+        - password
+        - username
     LoginResponse:
       type: object
       description: DTO для ответа при успешном логине
@@ -484,12 +551,12 @@ components:
     PageCardDTO:
       type: object
       properties:
-        totalPages:
-          type: integer
-          format: int32
         totalElements:
           type: integer
           format: int64
+        totalPages:
+          type: integer
+          format: int32
         size:
           type: integer
           format: int32
@@ -521,16 +588,16 @@ components:
           format: int64
         sort:
           $ref: "#/components/schemas/SortObject"
+        unpaged:
+          type: boolean
         paged:
           type: boolean
-        pageNumber:
-          type: integer
-          format: int32
         pageSize:
           type: integer
           format: int32
-        unpaged:
-          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
     SortObject:
       type: object
       properties:
@@ -540,3 +607,9 @@ components:
           type: boolean
         unsorted:
           type: boolean
+  securitySchemes:
+    bearerAuth:
+      type: http
+      name: Authorization
+      scheme: bearer
+      bearerFormat: JWT
