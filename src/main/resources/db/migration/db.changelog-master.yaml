@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/migration/0005_insert_admin_user.yaml
   - include:
       file: db/migration/0006_add_deleted_to_cards.yaml
+  - include:
+      file: db/migration/0007_unique_cards_number.yaml

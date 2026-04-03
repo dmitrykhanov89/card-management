@@ -54,7 +54,7 @@ public class UserController {
      * @return {@link ResponseEntity} с {@link UserDTO} пользователя
      */
     @GetMapping("/{username}")
-    @PreAuthorize("hasRole('ADMIN') or #username == authentication.name")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Получить пользователя по имени", description = "Возвращает информацию о пользователе по его username")
     public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
         return ResponseEntity.ok(userService.findByUsernameDTO(username));
