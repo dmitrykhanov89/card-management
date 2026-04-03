@@ -201,17 +201,6 @@ POST /api/transfers
 
 Дополнительная документация доступна в папке `Docs`.
 
-## Тестирование
-
-```bash
-./gradlew test
-```
-
-Юнит-тесты покрывают:
-- Контроллеры (`AuthController`, `CardController`, `TransferController`, `UserController`)
-- Сервисы (`CardServiceImpl`, `TransferServiceImpl`, `UserServiceImpl`, `UserDetailsServiceImpl`)
-- Безопасность (`SecurityService`)
-
 ## Структура проекта
 
 ```
