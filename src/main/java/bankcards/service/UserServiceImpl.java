@@ -70,6 +70,7 @@ public class UserServiceImpl implements UserService {
                 });
     }
 
+    @Override
     public List<UserDTO> findAllDTO() {
         log.debug("Fetching all users");
         return userRepository.findAll().stream()
@@ -77,6 +78,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public UserDTO findByUsernameDTO(String username) {
         log.debug("Fetching user DTO by username: {}", username);
         return userRepository.findByUsername(username)
